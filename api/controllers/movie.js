@@ -60,6 +60,7 @@ function getMovie(req, res) {
         method: 'GET'
     } , function( error , response , body ) {
         if( !error && response.statusCode == 200 ) {
+            var jsonObj = JSON.parse( body );
             res.json( body );
         }
     });
