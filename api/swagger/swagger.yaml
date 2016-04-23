@@ -57,6 +57,11 @@ paths:
       # used as the method name of the controller
       operationId: getMovie
       parameters:
+        - name: reviews
+          in: query
+          description: The query used to delete specified records
+          required: true
+          type: boolean
         - name: ql
           in: query
           description: The query used to select records from the db

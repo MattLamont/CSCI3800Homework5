@@ -1,8 +1,8 @@
 {
-  "name": "hw4",
+  "name": "hw5",
   "version": "0.0.1",
   "private": "true",
-  "description": "My new Apigee 127 Project",
+  "description": "Proxy to movies/reviews database",
   "keywords": [],
   "author": "",
   "license": "",
@@ -31,8 +31,8 @@
     "start": "node app.js"
   },
   "api": {
-    "name": "hw4",
-    "basePath": "/hw4",
+    "name": "hw5",
+    "basePath": "/hw5",
     "main": "app.js"
   }
 }

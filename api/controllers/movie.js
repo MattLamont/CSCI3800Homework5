@@ -15,6 +15,8 @@
  It is a good idea to list the modules that your application depends on in the package.json in the project root
  */
 var util = require('util');
+var request = require( 'request' );
+var async = require( 'async' );
 //var usergrid = require( 'node_modules/usergrid' );
 
 /*
@@ -47,23 +49,89 @@ module.exports = {
 function getMovie(req, res) {
 
 
-    var request = require( 'request' );
+    //If the request specifies that they want both movies and reviews
+    async.parallel([
 
-    var ql = req.swagger.params.ql.value;
-    var query = 'http://api.usergrid.com/mattlamont/sandbox/movies?ql=';
-    query += ql;
+            //call the movie first
+            function(callback) {
 
-    console.log( 'Query: ' + query );
+                var url
+                    =
+                    "https://api.usergrid.com/mattlamont/sandbox/movies?ql="
+                    +
+                    req.swagger.params.ql.value;
 
-    request( {
-        url: query,
-        method: 'GET'
-    } , function( error , response , body ) {
-        if( !error && response.statusCode == 200 ) {
-            var jsonObj = JSON.parse( body );
-            res.json( body );
-        }
-    });
+                request(url,
+                    function (err,
+                              response,
+                              body) {
+
+                    // JSON body
+                        if (err) {
+                            console.log(err);
+                            callback(true);
+                            return;
+                        }
+
+                        var obj = JSON.parse(body);
+
+                        callback(false, obj);//callback final
+
+                    });
+            },
+
+            //query the review with corresponding movie name
+            function(callback) {
+
+                var url
+                    =
+                    "https://api.usergrid.com/mattlamont/sandbox/reviews?ql="
+                    +
+                    req.swagger.params.ql.value;
+
+                request(url,
+                    function (err,
+                              response,
+                              body) {
+
+                        // JSON body
+                        if (err) {
+                            console.log(err);
+                            callback(true);
+                            return;
+                        }
+
+                        var obj = JSON.parse(body);
+
+                        callback(false, obj); // callback final
+
+                    });
+
+            },
+
+        ],
+
+        //final callback
+        function (err, results) {
+
+            if (err) {
+                console.log(err);
+                res.send(500,"Severe Error on Server");
+                return;
+            }
+
+            if( req.swagger.params.reviews.value == true )
+            res.send({
+                Movies: results[0],
+                Reviews: results[1]
+            });
+
+            else{
+                res.send({Movies: results[0]});
+            }
+
+
+        });
 
 
 }
