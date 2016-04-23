@@ -47,7 +47,7 @@ module.exports = {
  Param 2: a handle to the response object
  */
 function getMovie(req, res) {
-    
+
 
     //If the request specifies that they want both movies and reviews
     async.parallel([
